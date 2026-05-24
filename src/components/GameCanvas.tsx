@@ -1360,7 +1360,7 @@ export default function GameCanvas({
         id="game-clickbar"
         onPointerDown={handleInteraction}
         onTouchStart={handleInteraction}
-        className="relative overflow-hidden bg-slate-950 cursor-pointer select-none transition-all duration-300 w-full max-w-[100vw] sm:max-w-[440px] aspect-[3/4] h-auto max-h-[72vh] sm:max-h-[78vh] md:max-h-[82vh] rounded-2xl border-4 border-white/50 shadow-2xl mx-auto shadow-black/45 touch-none flex flex-col justify-center items-center"
+        className="relative overflow-hidden bg-slate-950 cursor-pointer select-none transition-all duration-300 w-full max-w-[100vw] sm:max-w-[440px] aspect-[3/4] h-auto max-h-[72vh] sm:max-h-[78vh] md:max-h-[82vh] rounded-2xl border-4 border-white/50 shadow-2xl mx-auto shadow-black/45 touch-none flex flex-col justify-center items-center landscape:max-h-none landscape:h-full landscape:w-auto landscape:aspect-[3/4] landscape:rounded-t-none"
       >
         <canvas
           ref={canvasRef}
@@ -1399,28 +1399,28 @@ export default function GameCanvas({
         {/* Game Over elegant glass HUD overlay */}
         {gameState === 'GAMEOVER' && (
           <div 
-            className="absolute inset-0 bg-slate-950/45 backdrop-blur-xs flex flex-col items-center justify-between p-5 select-none z-30"
+            className="absolute inset-0 bg-slate-950/45 backdrop-blur-xs flex flex-col items-center justify-between p-5 landscape:p-2 select-none z-30"
           >
             {/* Header section with collision badge */}
-            <div className="text-center space-y-1 mt-1 shrink-0">
-              <span className="inline-block bg-rose-500/25 border border-rose-500/40 text-rose-200 px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest font-mono">
+            <div className="text-center space-y-1 landscape:space-y-0 mt-1 landscape:mt-0 shrink-0">
+              <span className="inline-block bg-rose-500/25 border border-rose-500/40 text-rose-200 px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest font-mono landscape:text-[7.5px] landscape:py-0">
                 Grounded!
               </span>
-              <h2 className="text-2.5xl font-black text-rose-400 drop-shadow-[0_2px_3px_rgba(0,0,0,0.85)] uppercase tracking-wide">
+              <h2 className="text-2.5xl landscape:text-lg font-black text-rose-400 drop-shadow-[0_2px_3px_rgba(0,0,0,0.85)] uppercase tracking-wide leading-tight">
                 Flight Over
               </h2>
             </div>
 
             {/* Content box showing Score achievements & Medals */}
-            <div className="w-full max-w-[270px] bg-white/20 backdrop-blur-md border border-white/25 rounded-2xl p-3.5 flex flex-col gap-2.5 shadow-lg">
-              <div className="grid grid-cols-2 gap-2 text-center">
-                <div className="bg-black/25 p-1.5 rounded-xl border border-white/10">
-                  <p className="text-[8.5px] uppercase tracking-wider text-slate-300 font-bold font-mono">Score</p>
-                  <p className="text-xl font-black font-mono text-white">{score}</p>
+            <div className="w-full max-w-[270px] bg-white/20 backdrop-blur-md border border-white/25 rounded-2xl p-3.5 landscape:p-2 landscape:rounded-xl flex flex-col gap-2.5 landscape:gap-1 shadow-lg">
+              <div className="grid grid-cols-2 gap-2 landscape:gap-1 text-center">
+                <div className="bg-black/25 p-1.5 landscape:p-1 rounded-xl landscape:rounded-md border border-white/10">
+                  <p className="text-[8.5px] landscape:text-[7px] uppercase tracking-wider text-slate-300 font-bold font-mono">Score</p>
+                  <p className="text-xl landscape:text-sm font-black font-mono text-white">{score}</p>
                 </div>
-                <div className="bg-black/25 p-1.5 rounded-xl border border-white/10 relative overflow-hidden">
-                  <p className="text-[8.5px] uppercase tracking-wider text-slate-300 font-bold font-mono">Best</p>
-                  <p className="text-xl font-black font-mono text-white">{highScore}</p>
+                <div className="bg-black/25 p-1.5 landscape:p-1 rounded-xl landscape:rounded-md border border-white/10 relative overflow-hidden">
+                  <p className="text-[8.5px] landscape:text-[7px] uppercase tracking-wider text-slate-300 font-bold font-mono">Best</p>
+                  <p className="text-xl landscape:text-sm font-black font-mono text-white">{highScore}</p>
                   {isNewHighScore && (
                     <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   )}
@@ -1439,17 +1439,17 @@ export default function GameCanvas({
                 const medalVal = getMedalSec(score);
                 if (medalVal) {
                   return (
-                    <div className="bg-black/20 p-2 rounded-xl border border-white/10 flex items-center justify-center gap-1.5">
-                      <span className="text-xl animate-bounce">{medalVal.symbol}</span>
+                    <div className="bg-black/20 p-2 landscape:p-1 rounded-xl landscape:rounded-md border border-white/10 flex items-center justify-center gap-1.5">
+                      <span className="text-xl landscape:text-base animate-bounce">{medalVal.symbol}</span>
                       <div className="text-left font-sans">
-                        <p className="text-[7.5px] font-mono text-slate-300 uppercase leading-none font-black">Medal Awarded</p>
-                        <p className="text-[10px] font-black text-white leading-none mt-1">{medalVal.name} Medal</p>
+                        <p className="text-[7.5px] landscape:text-[6px] font-mono text-slate-300 uppercase leading-none font-black">Medal Awarded</p>
+                        <p className="text-[10px] landscape:text-[8px] font-black text-white leading-none mt-1">{medalVal.name} Medal</p>
                       </div>
                     </div>
                   );
                 } else {
                   return (
-                    <div className="text-[9px] text-center text-slate-200 font-medium font-sans">
+                    <div className="text-[9px] landscape:text-[7.5px] text-center text-slate-200 font-medium font-sans">
                       Reach <span className="font-extrabold text-white">10 score</span> for Bronze Medal!
                     </div>
                   );
@@ -1457,14 +1457,14 @@ export default function GameCanvas({
               })()}
 
               {isNewHighScore && (
-                <div className="bg-emerald-500/25 border border-emerald-500/35 rounded-lg py-0.5 text-center text-[8.5px] font-bold font-mono text-emerald-200 tracking-wider">
+                <div className="bg-emerald-500/25 border border-emerald-500/35 rounded-lg py-0.5 text-center text-[8.5px] landscape:text-[7px] font-bold font-mono text-emerald-200 tracking-wider">
                   🎉 NEW PERSONAL BEST! 🎉
                 </div>
               )}
             </div>
 
             {/* Clean, translucent CTA light style Buttons matching requirements */}
-            <div className="w-full max-w-[270px] flex flex-col gap-2 mb-1.5 font-sans">
+            <div className="w-full max-w-[270px] flex flex-col gap-2 landscape:gap-1 mb-1.5 landscape:mb-0 font-sans">
               
               {/* BUTTON 1: TRY AGAIN (styled identical to 'Tap anywhere to fly' banner with tap scale animations) */}
               <motion.button
@@ -1483,7 +1483,7 @@ export default function GameCanvas({
                   onGameStart();
                   sfx.playJump();
                 }}
-                className="w-full py-2.5 bg-white/45 hover:bg-white/60 text-slate-950 border border-white/60 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest cursor-pointer shadow-md flex items-center justify-center gap-1.5 outline-none duration-150 transition-colors"
+                className="w-full py-2.5 landscape:py-1.5 bg-white/45 hover:bg-white/60 text-slate-950 border border-white/60 backdrop-blur-md rounded-full text-[10px] landscape:text-[8.5px] font-black uppercase tracking-widest cursor-pointer shadow-md flex items-center justify-center gap-1.5 outline-none duration-150 transition-colors"
                 title="Restart gameplay"
               >
                 <Play className="w-3 h-3 fill-slate-950 stroke-slate-950 text-slate-950 animate-pulse" />
@@ -1507,14 +1507,14 @@ export default function GameCanvas({
                   onResetToStart();
                   sfx.playPoint();
                 }}
-                className="w-full py-2 bg-black/35 hover:bg-black/45 text-slate-100 border border-white/20 backdrop-blur-xs rounded-full text-[9px] font-bold uppercase tracking-widest cursor-pointer shadow-sm flex items-center justify-center gap-1.5 outline-none duration-150 transition-colors"
+                className="w-full py-2 landscape:py-1 bg-black/35 hover:bg-black/45 text-slate-100 border border-white/20 backdrop-blur-xs rounded-full text-[9px] landscape:text-[8px] font-bold uppercase tracking-widest cursor-pointer shadow-sm flex items-center justify-center gap-1.5 outline-none duration-150 transition-colors"
               >
                 <Home className="w-3 h-3 text-slate-200" />
                 <span>Home & customize</span>
               </motion.button>
 
               {/* PULSE TUTORIAL CALLOUT */}
-              <p className="text-center text-[8px] text-slate-300 font-bold font-mono tracking-wide mt-1 uppercase leading-none drop-shadow">
+              <p className="text-center text-[8px] text-slate-300 font-bold font-mono tracking-wide mt-1 landscape:mt-0 landscape:hidden uppercase leading-none drop-shadow">
                 Tap on the action buttons above
               </p>
             </div>
