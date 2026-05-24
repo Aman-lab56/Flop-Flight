@@ -126,6 +126,12 @@ export default function GameCanvas({
   const lastFlapTime = useRef<number>(0);
   const [hasStartedFlying, setHasStartedFlying] = useState(false);
   
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({
+    logicalWidth: 480,
+    logicalHeight: 640,
+  });
+
   // Game states referenced in the render/update loop
   const stateRef = useRef({
     gameState,
@@ -148,6 +154,8 @@ export default function GameCanvas({
     flashOpaque: 0, // screenshake or crash flash
     screenShake: 0, // screenshake duration
     hasStartedFlying: false,
+    logicalWidth: 480,
+    logicalHeight: 640,
   });
 
   // Keep ref game settings in sync with props
@@ -190,6 +198,57 @@ export default function GameCanvas({
       setHasStartedFlying(false);
     }
   }, [gameState, difficulty, themeId, skinId, soundEnabled, highScore]);
+
+  // Synchronize canvas proportions to container size on screen dynamically
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        let { width, height } = entry.contentRect;
+        // fallback measurement if contentRect is zero
+        if (width === 0 || height === 0) {
+          const rect = container.getBoundingClientRect();
+          width = rect.width;
+          height = rect.height;
+        }
+        if (width > 0 && height > 0) {
+          const aspect = width / height;
+          // Standard base vertical coordinate logic is balanced at height=640
+          const logicalHeight = 640;
+          const logicalWidth = Math.round(640 * aspect);
+          setDimensions({ logicalWidth, logicalHeight });
+          stateRef.current.logicalWidth = logicalWidth;
+          stateRef.current.logicalHeight = logicalHeight;
+        }
+      }
+    });
+
+    resizeObserver.observe(container);
+    
+    const handleResize = () => {
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        const aspect = rect.width / rect.height;
+        const logicalHeight = 640;
+        const logicalWidth = Math.round(640 * aspect);
+        setDimensions({ logicalWidth, logicalHeight });
+        stateRef.current.logicalWidth = logicalWidth;
+        stateRef.current.logicalHeight = logicalHeight;
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Initial check
+    handleResize();
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   // Dimension parameters
   const LOGICAL_WIDTH = 480;
@@ -353,6 +412,8 @@ export default function GameCanvas({
       lastTime = currentTime;
 
       const state = stateRef.current;
+      const LOGICAL_WIDTH = state.logicalWidth;
+      const LOGICAL_HEIGHT = state.logicalHeight;
       const theme = THEMES.find(t => t.id === state.themeId) || THEMES[0];
       const skin = SKINS.find(s => s.id === state.skinId) || SKINS[0];
       const config = DIFFICULTY_PRESETS[state.difficulty];
@@ -1358,16 +1419,17 @@ export default function GameCanvas({
       {/* Tap / Click Area container */}
       <div 
         id="game-clickbar"
+        ref={containerRef}
         onPointerDown={handleInteraction}
         onTouchStart={handleInteraction}
-        className="relative overflow-hidden bg-slate-950 cursor-pointer select-none transition-all duration-300 w-full max-w-[100vw] sm:max-w-[440px] aspect-[3/4] h-auto max-h-[72vh] sm:max-h-[78vh] md:max-h-[82vh] rounded-2xl border-4 border-white/50 shadow-2xl mx-auto shadow-black/45 touch-none flex flex-col justify-center items-center landscape:max-h-none landscape:h-full landscape:w-auto landscape:aspect-[3/4] landscape:rounded-t-none"
+        className="relative overflow-hidden bg-slate-950 cursor-pointer select-none transition-all duration-300 w-full max-w-[100vw] sm:max-w-[440px] aspect-[3/4] h-auto max-h-[72vh] sm:max-h-[78vh] md:max-h-[82vh] rounded-2xl border-4 border-white/50 shadow-2xl mx-auto shadow-black/45 touch-none flex flex-col justify-center items-center landscape:max-h-none landscape:h-full landscape:w-full landscape:max-w-none landscape:aspect-auto landscape:rounded-none landscape:border-0"
       >
         <canvas
           ref={canvasRef}
-          width={LOGICAL_WIDTH}
-          height={LOGICAL_HEIGHT}
+          width={dimensions.logicalWidth}
+          height={dimensions.logicalHeight}
           className="w-full h-full block flex-1"
-          style={{ imageRendering: 'pixelated', objectFit: 'contain' }}
+          style={{ imageRendering: 'pixelated', objectFit: 'fill' }}
         />
 
         {/* Start Game Instructions overlay - sits nicely over static canvas */}

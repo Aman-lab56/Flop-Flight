@@ -306,13 +306,13 @@ export default function App() {
       </header>
 
       {/* PORTRAIT SCREEN BOARD - IMMERSIVE FULL VIEWPORT PRESENTATION */}
-      <main className={`flex-1 w-full max-w-7xl mx-auto flex flex-col items-center justify-center relative z-10 ${gameState !== 'START' ? 'p-0 sm:p-4 h-full sm:h-auto landscape:p-0 landscape:h-full' : 'px-4 py-4 landscape:p-2'}`}>
+      <main className={`flex-1 w-full max-w-7xl mx-auto flex flex-col items-center justify-center relative z-10 landscape:p-0 landscape:h-[100dvh] landscape:max-w-none ${gameState !== 'START' ? 'p-0 sm:p-4 h-full sm:h-auto' : 'px-4 py-4'}`}>
         
         {/* Core Center Frame Board (Positions canvas portrait panel) */}
-        <div className={`w-full flex flex-col items-center justify-center relative ${gameState !== 'START' ? 'max-w-full sm:max-w-[440px] h-full sm:h-auto landscape:max-w-none landscape:h-[100dvh]' : 'max-w-[440px]'}`}>
+        <div className={`w-full flex flex-col items-center justify-center relative landscape:max-w-none landscape:h-[100dvh] ${gameState !== 'START' ? 'max-w-full sm:max-w-[440px] h-full sm:h-auto' : 'max-w-[440px]'}`}>
           
           {/* Active stats bar sitting directly on top of screen container */}
-          <div className={`w-full flex items-center justify-between px-4 py-2 bg-white/25 font-mono text-xs text-slate-900 z-10 select-none ${gameState !== 'START' ? 'rounded-none sm:rounded-t-2xl border-b sm:border-x sm:border-t border-white/35 landscape:py-1 landscape:text-[10px] landscape:border-y-0 landscape:border-x-0' : 'border-x border-t border-white/35 rounded-t-2xl'}`}>
+          <div className={`w-full flex items-center justify-between px-4 py-2 bg-white/25 font-mono text-xs text-slate-900 z-10 select-none landscape:absolute landscape:top-0 landscape:left-0 landscape:right-0 landscape:border-0 landscape:bg-white/10 landscape:backdrop-blur-xs ${gameState !== 'START' ? 'rounded-none sm:rounded-t-2xl border-b sm:border-x sm:border-t border-white/35' : 'border-x border-t border-white/35 rounded-t-2xl'}`}>
             <div className="flex items-center gap-1.5">
               <span className={`w-2 h-2 rounded-full ${gameState === 'PLAYING' ? 'bg-emerald-600 animate-pulse' : 'bg-amber-600'}`} />
               <span className="text-[10px] tracking-wide font-black uppercase shrink-0">
@@ -332,7 +332,7 @@ export default function App() {
           </div>
 
           {/* Canvas Wrapper Component */}
-          <div className="w-full relative flex-1 sm:flex-initial flex flex-col justify-center landscape:h-full landscape:min-h-0 landscape:w-auto">
+          <div className="w-full relative flex-1 sm:flex-initial flex flex-col justify-center landscape:h-full landscape:w-full landscape:max-w-none landscape:aspect-auto">
             <GameCanvas
               gameState={gameState}
               difficulty={difficulty}
