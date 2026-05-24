@@ -1,0 +1,6 @@
+{
+  "name": "Flop Flight",
+  "description": "A polished and responsive Flop Flight game with customizable avian characters, multiple environment themes, sound effects, and persistent high scores.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
