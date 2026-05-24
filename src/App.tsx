@@ -354,11 +354,21 @@ export default function App() {
               <div className="absolute top-4 left-4 flex gap-2 z-20">
                 <button
                   id="pause-game-btn"
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setGameState('PAUSED');
+                  }}
+                  onPointerDown={(e) => {
+                    if (e.pointerType === 'touch') return;
+                    e.stopPropagation();
+                    setGameState('PAUSED');
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     setGameState('PAUSED');
                   }}
-                  className="p-1 px-2.5 rounded bg-white/40 hover:bg-white/60 hover:text-slate-950 transition-all border border-white/45 text-[10px] font-mono text-slate-900 font-bold uppercase tracking-wider shadow"
+                  className="p-1 px-2.5 rounded bg-white/40 hover:bg-white/60 hover:text-slate-950 transition-all border border-white/45 text-[10px] font-mono text-slate-900 font-bold uppercase tracking-wider shadow cursor-pointer"
                   title="Pause gameplay"
                 >
                   Pause
@@ -370,11 +380,21 @@ export default function App() {
               <div className="absolute top-4 left-4 flex gap-2 z-20">
                 <button
                   id="resume-game-btn"
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setGameState('PLAYING');
+                  }}
+                  onPointerDown={(e) => {
+                    if (e.pointerType === 'touch') return;
+                    e.stopPropagation();
+                    setGameState('PLAYING');
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     setGameState('PLAYING');
                   }}
-                  className="p-1 px-2.5 rounded bg-white/40 hover:bg-white/60 hover:text-slate-950 transition-all border border-white/45 text-[10px] font-mono text-slate-900 font-bold uppercase tracking-wider shadow"
+                  className="p-1 px-2.5 rounded bg-white/40 hover:bg-white/60 hover:text-slate-950 transition-all border border-white/45 text-[10px] font-mono text-slate-900 font-bold uppercase tracking-wider shadow cursor-pointer"
                   title="Resume gameplay"
                 >
                   Resume
@@ -387,6 +407,16 @@ export default function App() {
               <div className="absolute top-4 right-4 z-20">
                 <button
                   id="exit-game-btn"
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleResetToStart();
+                  }}
+                  onPointerDown={(e) => {
+                    if (e.pointerType === 'touch') return;
+                    e.stopPropagation();
+                    handleResetToStart();
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleResetToStart();

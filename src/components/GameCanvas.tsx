@@ -299,6 +299,48 @@ export default function GameCanvas({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Mobile Touch Controls anywhere on viewport for seamless gameplay feel
+  useEffect(() => {
+    if (gameState !== 'PLAYING' && gameState !== 'START') return;
+
+    const handleWindowTouch = (e: TouchEvent | PointerEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target) return;
+
+      // Ignore touches on interface buttons so user can interact with menus
+      if (
+        target.closest('button') ||
+        target.closest('#play-again-btn') ||
+        target.closest('#home-btn') ||
+        target.closest('#header-sound-btn') ||
+        target.closest('#header-score-board-btn') ||
+        target.closest('#pause-game-btn') ||
+        target.closest('#resume-game-btn')
+      ) {
+        return;
+      }
+
+      // If it's a touch event, call preventDefault to stop click/mouse delays & page zooming
+      if (e.type === 'touchstart') {
+        e.preventDefault();
+      }
+
+      const now = Date.now();
+      if (now - lastFlapTime.current < 45) return;
+      lastFlapTime.current = now;
+
+      handleFlap();
+    };
+
+    window.addEventListener('touchstart', handleWindowTouch, { passive: false });
+    window.addEventListener('pointerdown', handleWindowTouch);
+
+    return () => {
+      window.removeEventListener('touchstart', handleWindowTouch);
+      window.removeEventListener('pointerdown', handleWindowTouch);
+    };
+  }, [gameState]);
+
   // Main Loop logic using standard animation frame
   useEffect(() => {
     let animationFrameId: number;
@@ -1299,9 +1341,11 @@ export default function GameCanvas({
     return () => cancelAnimationFrame(animationFrameId);
   }, [onScoreChange, onGameOver, onGameStart]);
 
-  // Unified pointer interaction handler
-  const handleInteraction = (e: React.PointerEvent) => {
-    e.preventDefault();
+  // Unified pointer/touch interaction handler
+  const handleInteraction = (e: React.SyntheticEvent) => {
+    if (e.type === 'touchstart') {
+      e.preventDefault();
+    }
     e.stopPropagation();
     const now = Date.now();
     if (now - lastFlapTime.current < 45) return;
@@ -1315,18 +1359,15 @@ export default function GameCanvas({
       <div 
         id="game-clickbar"
         onPointerDown={handleInteraction}
-        className={`relative overflow-hidden bg-slate-950 cursor-pointer select-none transition-all duration-300 w-full touch-none flex-1 flex flex-col ${
-          gameState !== 'START' 
-            ? 'rounded-none sm:rounded-2xl border-0 sm:border-4 border-white/50 shadow-none sm:shadow-2xl h-full sm:h-auto sm:aspect-[3/4] sm:max-w-[440px]' 
-            : 'rounded-2xl border-4 border-white/50 aspect-[3/4] max-w-[440px] shadow-2xl'
-        }`}
+        onTouchStart={handleInteraction}
+        className="relative overflow-hidden bg-slate-950 cursor-pointer select-none transition-all duration-300 w-full max-w-[100vw] sm:max-w-[440px] aspect-[3/4] h-auto max-h-[72vh] sm:max-h-[78vh] md:max-h-[82vh] rounded-2xl border-4 border-white/50 shadow-2xl mx-auto shadow-black/45 touch-none flex flex-col justify-center items-center"
       >
         <canvas
           ref={canvasRef}
           width={LOGICAL_WIDTH}
           height={LOGICAL_HEIGHT}
           className="w-full h-full block flex-1"
-          style={{ imageRendering: 'pixelated' }}
+          style={{ imageRendering: 'pixelated', objectFit: 'contain' }}
         />
 
         {/* Start Game Instructions overlay - sits nicely over static canvas */}
@@ -1358,27 +1399,6 @@ export default function GameCanvas({
         {/* Game Over elegant glass HUD overlay */}
         {gameState === 'GAMEOVER' && (
           <div 
-            onPointerDown={(e) => {
-              e.stopPropagation();
-            }}
-            onPointerUp={(e) => {
-              e.stopPropagation();
-            }}
-            onTouchStart={(e) => {
-              e.stopPropagation();
-            }}
-            onTouchEnd={(e) => {
-              e.stopPropagation();
-            }}
-            onMouseDown={(e) => {
-              e.stopPropagation();
-            }}
-            onMouseUp={(e) => {
-              e.stopPropagation();
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
             className="absolute inset-0 bg-slate-950/45 backdrop-blur-xs flex flex-col items-center justify-between p-5 select-none z-30"
           >
             {/* Header section with collision badge */}
@@ -1451,12 +1471,20 @@ export default function GameCanvas({
                 id="play-again-btn"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.96 }}
-                onClick={(e) => {
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onGameStart();
+                  sfx.playJump();
+                }}
+                onPointerDown={(e) => {
+                  if (e.pointerType === 'touch') return;
                   e.stopPropagation();
                   onGameStart();
                   sfx.playJump();
                 }}
                 className="w-full py-2.5 bg-white/45 hover:bg-white/60 text-slate-950 border border-white/60 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest cursor-pointer shadow-md flex items-center justify-center gap-1.5 outline-none duration-150 transition-colors"
+                title="Restart gameplay"
               >
                 <Play className="w-3 h-3 fill-slate-950 stroke-slate-950 text-slate-950 animate-pulse" />
                 <span>PLAY AGAIN</span>
@@ -1467,7 +1495,14 @@ export default function GameCanvas({
                 id="home-btn"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.96 }}
-                onClick={(e) => {
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onResetToStart();
+                  sfx.playPoint();
+                }}
+                onPointerDown={(e) => {
+                  if (e.pointerType === 'touch') return;
                   e.stopPropagation();
                   onResetToStart();
                   sfx.playPoint();
